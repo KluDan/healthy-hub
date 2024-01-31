@@ -1,4 +1,4 @@
-import{t as o,v as t,s as h}from"./index-ba92c86c.js";const l=o`
+import{t as o,v as t,s as h}from"./index-bb739d8f.js";const l=o`
   padding: 8px 10px;
   border-radius: 12px;
   text-decoration: none;
