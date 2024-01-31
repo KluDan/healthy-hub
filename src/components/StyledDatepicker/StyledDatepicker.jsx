@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux"; 
-import { format, startOfMonth, endOfMonth } from "date-fns";
-import DatePicker from "react-datepicker";
-import { CalendarGlobalStyles, TitleWrapper } from "./StyledDatepicker.styled";
-import "react-datepicker/dist/react-datepicker-cssmodules.css";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
+import DatePicker from 'react-datepicker';
+import { CalendarGlobalStyles, TitleWrapper } from './StyledDatepicker.styled';
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import { getStats } from '../../redux/statistics/statisticOperations';
 
 const StyledDatepicker = () => {
@@ -12,21 +12,30 @@ const StyledDatepicker = () => {
 
   const formatDateForUrl = (date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }; 
+  };
+
+  const fetchDataAndUpdate = async (startDate, endDate) => {
+    try {
+      const newDateRange = `${formatDateForUrl(startDate)}${formatDateForUrl(
+        endDate
+      )}`;
+      await dispatch(getStats(newDateRange));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const updateUrlParams = (startDate, endDate) => {
-    const startDateFormatted = formatDateForUrl(startDate);
-    const endDateFormatted = formatDateForUrl(endDate);
-    const dateRange = `${startDateFormatted}${endDateFormatted}`;
-    
-    dispatch(getStats(dateRange));
+    fetchDataAndUpdate(startDate, endDate);
   };
 
   useEffect(() => {
-    updateUrlParams(startOfMonth(selectedDate), endOfMonth(selectedDate));
+    const startDate = startOfMonth(selectedDate);
+    const endDate = endOfMonth(selectedDate);
+    updateUrlParams(startDate, endDate);
   }, [dispatch, selectedDate]);
 
   return (
@@ -37,10 +46,12 @@ const StyledDatepicker = () => {
           setSelectedDate(date);
           updateUrlParams(startOfMonth(date), endOfMonth(date));
         }}
-        dateFormat={"dd MM yyyy"}
+        dateFormat={'dd MM yyyy'}
         calendarStartDay={1}
         showMonthYearPicker
-        customInput={<TitleWrapper>{format(selectedDate, "MMMM")}</TitleWrapper>}
+        customInput={
+          <TitleWrapper>{format(selectedDate, 'MMMM')}</TitleWrapper>
+        }
       />
       <CalendarGlobalStyles />
     </>

@@ -15,10 +15,24 @@ function getStartAndEndDate(dateString) {
     return null;
   }
 }
+
 export const getStats = createAsyncThunk(
   'dairy/statistics',
   async (date, thunkAPI) => {
-    const [startDate, endDate] = getStartAndEndDate(date);
+    let startDate, endDate;
+
+    if (typeof date === 'string') {
+      [startDate, endDate] = getStartAndEndDate(date);
+    } else if (typeof date === 'object' && date.dateFrom && date.dateTo) {
+      startDate = date.dateFrom;
+      endDate = date.dateTo;
+    } else {
+      console.error('Invalid date format');
+      return thunkAPI.rejectWithValue('Invalid date format');
+    }
+
+    console.log('dates:', startDate, endDate);
+
     try {
       const { data } = await axios.get(`/api/user/statistics`, {
         params: {
@@ -26,7 +40,8 @@ export const getStats = createAsyncThunk(
           dateTo: endDate,
         },
       });
-      console.log(data.stats)
+
+      console.log('Data:', data);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
