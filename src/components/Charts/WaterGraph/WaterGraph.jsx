@@ -22,38 +22,37 @@ import {
   HeaderData,
 } from './WaterGraph.styled';
 import { useEffect, useState } from 'react';
-import { getStats } from '../../../redux/statistics/statisticOperations';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectInfo } from '../../../redux/statistics/statisticSelectors';
+import { getStats } from '../../../redux/statistics/statisticOperations';
 
-export const WaterGraph = ({ dateRange }) => {
-  const [waterIntake, setWaterIntake] = useState([]);
+export const WaterGraph = ({ dateRange, waterIntake }) => {
+  let daysArray = [];
 
-  const info = useSelector(selectInfo);
+  if (dateRange !== null) {
+    const startDateString = dateRange.substring(0, 10);
+    const endDateString = dateRange.substring(10);
 
-  useEffect(() => {
-    if (info && Array.isArray(info)) {
-      setWaterIntake(info);
+    const startDate = new Date(startDateString);
+    const endDate = new Date(endDateString);
+
+    daysArray = [];
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      daysArray.push(currentDate.getDate());
+      currentDate.setDate(currentDate.getDate() + 1);
     }
-  }, [info]);
 
-  const numberOfDaysInTheMonth = (date) => {
-    let monthNumberTested;
+    console.log('Массив чисел с днями месяца:', daysArray);
+  } else {
+    console.log('Строка dateRange равна null.');
+  }
 
-    if (date !== new Date().getMonth()) {
-      monthNumberTested = new Date().getDate();
-    } else {
-      monthNumberTested = new Date(2023, date, 0).getDate();
-    }
-    const daysArray = Array.from({ length: monthNumberTested }, (_, index) =>
-      (index + 1).toString()
-    );
-    return daysArray;
-  };
-
-  const labels = numberOfDaysInTheMonth(dateRange);
+  const labels = daysArray;
   console.log('Labels:', labels);
 
+  console.log('WaterIntake', waterIntake);
   const waterIntakeArray = waterIntake.map((item) => item.stats.waterIntake);
   console.log('WaterIntakeArray', waterIntakeArray);
 
@@ -82,17 +81,6 @@ export const WaterGraph = ({ dateRange }) => {
 
   console.log('CombinedWaterIntakeData', combinedWaterIntakeData);
 
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Filler,
-    Legend
-  );
-
   const maxNumber = Math.max(...waterIntakeArray);
   console.log(maxNumber);
 
@@ -118,9 +106,19 @@ export const WaterGraph = ({ dateRange }) => {
     return totalWater / combinedWaterIntakeData.length;
   };
 
-  // Использование среднего значения в коде
   const avgWater = averageWater();
   console.log('Average Water Consumption:', avgWater);
+
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Filler,
+    Legend
+  );
 
   const options = {
     responsive: true,
@@ -222,17 +220,12 @@ export const WaterGraph = ({ dateRange }) => {
     <WaterSectionhWrapper>
       <WaterHeadingWrapper>
         <WaterHeader>Water</WaterHeader>
-        {avgWater ? (
-          <HeaderData>
-            <WaterAverageTitle>Average value:</WaterAverageTitle>
-            <WaterAverageNumber>{avgWater.toFixed(0)} ml</WaterAverageNumber>
-          </HeaderData>
-        ) : (
-          <HeaderData>
-            <WaterAverageTitle>Average value:</WaterAverageTitle>
-            <WaterAverageNumber>no added data yet</WaterAverageNumber>
-          </HeaderData>
-        )}
+        <HeaderData>
+          <WaterAverageTitle>Average value:</WaterAverageTitle>
+          <WaterAverageNumber>
+            {avgWater ? `${avgWater.toFixed(0)} ml` : '0 ml'}
+          </WaterAverageNumber>
+        </HeaderData>
       </WaterHeadingWrapper>
       <ScrollerWrapper>
         <Overflow>

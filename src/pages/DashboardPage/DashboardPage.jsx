@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import StyledDatepicker from '../../components/StyledDatepicker/StyledDatepicker';
 import { WaterGraph } from '../../components/Charts/WaterGraph/WaterGraph';
@@ -18,25 +18,34 @@ import {
 } from './DashboardPage.styled';
 import BackLink from '../../components/BackLink';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { getStats } from '../../redux/statistics/statisticOperations';
+import { selectInfo } from '../../redux/statistics/statisticSelectors';
 
 const DashboardPage = () => {
   const [date, setDate] = useState(null);
+  const [dateRange, setDateRange] = useState(null);
+  const dispatch = useDispatch();
 
-  const getCurrentMonthDateRange = () => {
-    const today = new Date();
-    const startDate = startOfMonth(today);
-    const endDate = endOfMonth(today);
-
-    return {
-      dateFrom: format(startDate, 'yyyy-MM-dd'),
-      dateTo: format(endDate, 'yyyy-MM-dd'),
-    };
-  };
+  const [waterIntake, setWaterIntake] = useState([]);
+  const statsInfo = useSelector(selectInfo);
+  console.log('statsInfo', statsInfo);
 
   useEffect(() => {
-    const todayDateRange = getCurrentMonthDateRange();
-    console.log('Current Month Date Range:', todayDateRange);
-  }, []);
+    const fetchDataAndUpdate = async () => {
+      try {
+        await dispatch(getStats(dateRange));
+        if (statsInfo && Array.isArray(statsInfo)) {
+          setWaterIntake(statsInfo);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    if (dateRange) {
+      fetchDataAndUpdate();
+    }
+  }, [dispatch, dateRange]);
 
   return (
     <DashboardSection>
@@ -44,16 +53,16 @@ const DashboardPage = () => {
         <HeaderBlock>
           <MainHeaderBlock>
             <BackLink />
-            <StyledDatepicker />
+            <StyledDatepicker onDateRangeChange={setDateRange} />
           </MainHeaderBlock>
           <SecondHeader></SecondHeader>
         </HeaderBlock>
         <LineChartBlock>
           <ChartGrid>
-            <CaloriesGraph date={date} setDate={setDate} />
+            <CaloriesGraph dateRange={dateRange} />
           </ChartGrid>
           <ChartGrid>
-            <WaterGraph dateRange={getCurrentMonthDateRange()} />
+            <WaterGraph dateRange={dateRange} waterIntake={waterIntake} />
           </ChartGrid>
         </LineChartBlock>
         <ScaleChartBlock>

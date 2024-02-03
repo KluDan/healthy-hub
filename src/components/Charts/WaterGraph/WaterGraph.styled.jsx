@@ -51,7 +51,7 @@ export const WaterHeadingWrapper = styled.div`
   display: flex;
   align-items: baseline;
   margin-bottom: 6px;
-  justify-content: space-between;
+  gap: 20px;
 `;
 export const WaterHeader = styled.h2`
   font-family: Poppins;
@@ -72,7 +72,7 @@ export const HeaderData = styled.div`
 
 export const WaterGraphWrapper = styled.div`
   border-radius: 12px;
-  background: var(--layout-color);
+  background: ${(p) => p.theme.colors.primaryBlack2};
   padding-left: 15px;
   padding-top: 25px;
   padding-right: 15px;
