@@ -79,16 +79,10 @@ export const ChartGrid = styled.div`
     display: flex;
     flex-direction: column;
     overflow-x: scroll;
-    &:not(:last-child) {
-      margin-bottom: 27px;
-    }
   }
   @media screen and (${(props) => props.theme.mq.tabMin}) {
-    display: imline-block;
+    display: inline-block;
     overflow-x: hidden;
-    &:not(:last-child) {
-      margin-bottom: 40px;
-    }
   }
 `;
 
@@ -97,13 +91,13 @@ export const ScaleChartBlock = styled.div`
     display: flex;
     flex-direction: column;
     overflow-x: scroll;
-    margin-top: 27px;
+    margin-top: 32px;
   }
   @media screen and (${(props) => props.theme.mq.tabMin}) {
-    margin-top: 40px;
+    margin-top: 47px;
     overflow-x: hidden;
   }
   @media screen and (${(props) => props.theme.mq.deskMin}) {
-    margin-top: 20px;
+    margin-top: 27px;
   }
 `;

@@ -16,6 +16,7 @@ const statsSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getStats.fulfilled, (state, action) => {
+        state.info = {};
         state.info = action.payload;
       })
       .addCase(getStats.rejected, (state, action) => {

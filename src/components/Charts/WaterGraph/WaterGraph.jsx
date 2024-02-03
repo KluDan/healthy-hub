@@ -15,20 +15,29 @@ import {
   WaterAverageTitle,
   WaterHeader,
   WaterHeadingWrapper,
-  WaterSectionhWrapper,
+  WaterSectionWrapper,
   WaterGraphWrapper,
   Overflow,
   ScrollerWrapper,
   HeaderData,
 } from './WaterGraph.styled';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectInfo } from '../../../redux/statistics/statisticSelectors';
-import { getStats } from '../../../redux/statistics/statisticOperations';
 
-export const WaterGraph = ({ dateRange, waterIntake }) => {
+export const WaterGraph = ({ dateRange }) => {
+  const [waterIntake, seWaterIntake] = useState([]);
+  const statsInfo = useSelector(selectInfo);
+
+  useEffect(() => {
+    if (statsInfo && Array.isArray(statsInfo)) {
+      seWaterIntake(statsInfo);
+    } else {
+      seWaterIntake([]);
+    }
+  }, [statsInfo]);
+
   let daysArray = [];
-
   if (dateRange !== null) {
     const startDateString = dateRange.substring(0, 10);
     const endDateString = dateRange.substring(10);
@@ -40,17 +49,14 @@ export const WaterGraph = ({ dateRange, waterIntake }) => {
     let currentDate = new Date(startDate);
 
     while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate());
+      daysArray.push(currentDate.getDate().toString());
       currentDate.setDate(currentDate.getDate() + 1);
     }
-
-    console.log('Массив чисел с днями месяца:', daysArray);
   } else {
-    console.log('Строка dateRange равна null.');
+    console.log('DateRange is null.');
   }
 
   const labels = daysArray;
-  console.log('Labels:', labels);
 
   console.log('WaterIntake', waterIntake);
   const waterIntakeArray = waterIntake.map((item) => item.stats.waterIntake);
@@ -217,7 +223,7 @@ export const WaterGraph = ({ dateRange, waterIntake }) => {
   };
 
   return (
-    <WaterSectionhWrapper>
+    <WaterSectionWrapper>
       <WaterHeadingWrapper>
         <WaterHeader>Water</WaterHeader>
         <HeaderData>
@@ -234,6 +240,6 @@ export const WaterGraph = ({ dateRange, waterIntake }) => {
           </WaterGraphWrapper>
         </Overflow>
       </ScrollerWrapper>
-    </WaterSectionhWrapper>
+    </WaterSectionWrapper>
   );
 };

@@ -44,7 +44,7 @@ export const HeaderCurrentWeightModal = ({ closePanel }) => {
     }
 
     await dispatch(updateWeight(currentWeight));
-    await dispatch(refreshUser());
+    в;
     closePanel();
     setLoading(false);
   };

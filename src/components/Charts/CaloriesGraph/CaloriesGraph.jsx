@@ -16,7 +16,7 @@ import {
   CaloriesAverageTitle,
   CaloriesHeader,
   CaloriesHeadingWrapper,
-  CaloriesSectionhWrapper,
+  CaloriesSectionWrapper,
   СaloriesGraphWrapper,
   ScrollerWrapper,
   HeaderData,
@@ -32,6 +32,8 @@ export const CaloriesGraph = ({ dateRange }) => {
   useEffect(() => {
     if (statsInfo && Array.isArray(statsInfo)) {
       setCaloriesIntake(statsInfo);
+    } else {
+      setCaloriesIntake([]);
     }
   }, [statsInfo]);
 
@@ -55,10 +57,13 @@ export const CaloriesGraph = ({ dateRange }) => {
     console.log('DateRange is null.');
   }
   const labels = daysArray;
+
   const caloriesIntakeArray = caloriesIntake.map(
     (item) => item.stats.totalCalories
   );
+
   const initialCaloriesIntakeData = labels.map((day) => ({ day, value: 0 }));
+
   const caloriesIntakeData = caloriesIntake.reduce((result, item) => {
     const day = new Date(item.date).getDate().toString();
     result.push({ day, value: item.stats.totalCalories });
@@ -213,7 +218,7 @@ export const CaloriesGraph = ({ dateRange }) => {
   };
 
   return (
-    <CaloriesSectionhWrapper>
+    <CaloriesSectionWrapper>
       <CaloriesHeadingWrapper>
         <CaloriesHeader>Calories</CaloriesHeader>
         {avgCalories ? (
@@ -236,6 +241,6 @@ export const CaloriesGraph = ({ dateRange }) => {
           </СaloriesGraphWrapper>
         </Overflow>
       </ScrollerWrapper>
-    </CaloriesSectionhWrapper>
+    </CaloriesSectionWrapper>
   );
 };
