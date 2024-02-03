@@ -1,4 +1,4 @@
-import{t as o,v as t,s as h}from"./index-bb739d8f.js";const l=o`
+import{v as o,x as t,s as x}from"./index-3e843f87.js";const h=o`
   padding: 8px 10px;
   border-radius: 12px;
   text-decoration: none;
@@ -9,8 +9,8 @@ import{t as o,v as t,s as h}from"./index-bb739d8f.js";const l=o`
   line-height: 1.4;
   text-align: center;
   transition: ${t.transition.customTrans};
-`,u=h.button`
-  ${l}
+`,u=x.button`
+  ${h}
   ${({width:i,textColor:n,backGrColor:r,borderColor:e,widthTab:s,widthDesk:a,backGrColorHov:d,borderColorHov:$,textColorHov:c,widthTabHov:m,widthDeskHov:p})=>o`
     width: ${i};
     color: ${n};
@@ -52,4 +52,4 @@ import{t as o,v as t,s as h}from"./index-bb739d8f.js";const l=o`
       }
     }
   `}
-`;export{u as S,l as s};
+`;export{u as S,h as s};
