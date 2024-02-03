@@ -49,6 +49,39 @@ export const getStats = createAsyncThunk(
   }
 );
 
+export const getStatsForPeriod = createAsyncThunk(
+  'dairy/getStatisticsForPeriod',
+  async (date, thunkAPI) => {
+    let startDate, endDate;
+
+    if (typeof date === 'string') {
+      [startDate, endDate] = getStartAndEndDate(date);
+    } else if (typeof date === 'object' && date.dateFrom && date.dateTo) {
+      startDate = date.dateFrom;
+      endDate = date.dateTo;
+    } else {
+      console.error('Invalid date format');
+      return thunkAPI.rejectWithValue('Invalid date format');
+    }
+
+    console.log('dates:', startDate, endDate);
+
+    try {
+      const { data } = await axios.get(`/api/user/statistics`, {
+        params: {
+          dateFrom: startDate,
+          dateTo: endDate,
+        },
+      });
+
+      console.log('Data:', data);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 // diaryOnMain
 export const fetchGoalsConfirm = createAsyncThunk(
   'user/food-intake',

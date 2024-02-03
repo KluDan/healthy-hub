@@ -14,6 +14,18 @@ export const WeightTitleBlock = styled.div`
   @media (${(p) => p.theme.mq.deskMin}) {
     margin-bottom: 12px;
   }
+  h2 {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 32px;
+    margin-right: 40px;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    margin-right: 8px;
+  }
 `;
 export const WeightGraphBlock = styled.div`
   width: 100%;

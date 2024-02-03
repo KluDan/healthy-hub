@@ -17,31 +17,18 @@ import {
   ScaleChartBlock,
 } from './DashboardPage.styled';
 import BackLink from '../../components/BackLink';
-import { getStats } from '../../redux/statistics/statisticOperations';
+import { getStatsForPeriod } from '../../redux/statistics/statisticOperations';
 import { selectInfo } from '../../redux/statistics/statisticSelectors';
 
 const DashboardPage = () => {
-  const [date, setDate] = useState(null);
   const [dateRange, setDateRange] = useState(null);
   const dispatch = useDispatch();
-
-  const [stats, setStats] = useState([]);
   const statsInfo = useSelector(selectInfo);
-  useEffect(() => {
-    if (statsInfo && Array.isArray(statsInfo)) {
-      setStats(statsInfo);
-    } else {
-      setStats([]);
-    }
-  }, [statsInfo]);
-
-  console.log('СТАТСЫ', stats);
 
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
       try {
-        const data = await dispatch(getStats(dateRange));
-        console.log('Received data:', data);
+        await dispatch(getStatsForPeriod(dateRange));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -62,18 +49,16 @@ const DashboardPage = () => {
           </MainHeaderBlock>
           <SecondHeader></SecondHeader>
         </HeaderBlock>
-
         <LineChartBlock>
           <ChartGrid>
-            <CaloriesGraph dateRange={dateRange} />
+            <CaloriesGraph dateRange={dateRange} stats={statsInfo} />
           </ChartGrid>
           <ChartGrid>
-            <WaterGraph dateRange={dateRange} />
+            <WaterGraph dateRange={dateRange} stats={statsInfo} />
           </ChartGrid>
         </LineChartBlock>
-
         <ScaleChartBlock>
-          <WeightGraph dateRange={dateRange} />
+          <WeightGraph dateRange={dateRange} stats={statsInfo} />
         </ScaleChartBlock>
       </DashboardContainer>
     </DashboardSection>

@@ -146,7 +146,8 @@ export const CalendarGlobalStyles = createGlobalStyle`
 `;
 
 export const CalendarHeader = styled.div`
-  width: 1330px;
+  max-width: 100%;
+  width: 274px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -158,6 +159,13 @@ export const CalendarHeader = styled.div`
       font-size: 18px;
       line-height: 24px;
     }
+  }
+  @media (${(p) => p.theme.mq.tabMin}) {
+    width: 739px;
+  }
+
+  @media (${(p) => p.theme.mq.deskMin}) {
+    width: 1330px;
   }
 `;
 

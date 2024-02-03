@@ -21,52 +21,27 @@ import {
   ScrollerWrapper,
   HeaderData,
 } from './CaloriesGraph.styled';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectInfo } from '../../../redux/statistics/statisticSelectors';
 
-export const CaloriesGraph = ({ dateRange }) => {
-  const [caloriesIntake, setCaloriesIntake] = useState([]);
-  const statsInfo = useSelector(selectInfo);
+import { generateDaysArray } from '../../../helpers/generateDatesArray';
 
-  useEffect(() => {
-    if (statsInfo && Array.isArray(statsInfo)) {
-      setCaloriesIntake(statsInfo);
-    } else {
-      setCaloriesIntake([]);
-    }
-  }, [statsInfo]);
+export const CaloriesGraph = ({ dateRange, stats }) => {
+  let daysArray = generateDaysArray(dateRange);
 
-  let daysArray = [];
-
-  if (dateRange !== null) {
-    const startDateString = dateRange.substring(0, 10);
-    const endDateString = dateRange.substring(10);
-
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-
-    daysArray = [];
-    let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-  } else {
-    console.log('DateRange is null.');
-  }
   const labels = daysArray;
 
-  const caloriesIntakeArray = caloriesIntake.map(
-    (item) => item.stats.totalCalories
+  const caloriesIntakeArray = stats.map((item) =>
+    item.stats ? item.stats.totalCalories || 0 : 0
   );
 
   const initialCaloriesIntakeData = labels.map((day) => ({ day, value: 0 }));
 
-  const caloriesIntakeData = caloriesIntake.reduce((result, item) => {
-    const day = new Date(item.date).getDate().toString();
-    result.push({ day, value: item.stats.totalCalories });
+  const caloriesIntakeData = stats.reduce((result, item) => {
+    if (item.stats) {
+      result.push({
+        day: new Date(item.date).getDate().toString(),
+        value: item.stats.totalCalories || 0,
+      });
+    }
     return result;
   }, []);
 

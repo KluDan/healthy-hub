@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { generateDaysArray } from '../../../helpers/generateDatesArray';
 import {
   WaterAverageNumber,
   WaterAverageTitle,
@@ -21,53 +22,29 @@ import {
   ScrollerWrapper,
   HeaderData,
 } from './WaterGraph.styled';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectInfo } from '../../../redux/statistics/statisticSelectors';
 
-export const WaterGraph = ({ dateRange }) => {
-  const [waterIntake, seWaterIntake] = useState([]);
-  const statsInfo = useSelector(selectInfo);
-
-  useEffect(() => {
-    if (statsInfo && Array.isArray(statsInfo)) {
-      seWaterIntake(statsInfo);
-    } else {
-      seWaterIntake([]);
-    }
-  }, [statsInfo]);
-
-  let daysArray = [];
-  if (dateRange !== null) {
-    const startDateString = dateRange.substring(0, 10);
-    const endDateString = dateRange.substring(10);
-
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-
-    daysArray = [];
-    let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-  } else {
-    console.log('DateRange is null.');
-  }
+export const WaterGraph = ({ dateRange, stats }) => {
+  let daysArray = generateDaysArray(dateRange);
 
   const labels = daysArray;
 
-  console.log('WaterIntake', waterIntake);
-  const waterIntakeArray = waterIntake.map((item) => item.stats.waterIntake);
+  console.log('WaterIntake', stats);
+  const waterIntakeArray = stats.map((item) =>
+    item.stats ? item.stats.waterIntake || 0 : 0
+  );
   console.log('WaterIntakeArray', waterIntakeArray);
 
   const initialWaterIntakeData = labels.map((day) => ({ day, value: 0 }));
   console.log('InitialWaterIntakeData', initialWaterIntakeData);
 
-  const waterIntakeData = waterIntake.reduce((result, item) => {
-    const day = new Date(item.date).getDate().toString();
-    result.push({ day, value: item.stats.waterIntake });
+  const waterIntakeData = stats.reduce((result, item) => {
+    if (item.stats) {
+      result.push({
+        day: new Date(item.date).getDate().toString(),
+        value: item.stats.waterIntake || 0,
+      });
+    }
+
     return result;
   }, []);
 

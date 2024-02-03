@@ -1,51 +1,19 @@
+import { generateDaysArray } from '../../../helpers/generateDatesArray';
 import {
   WeightBlock,
   WeightTitleBlock,
   WeightGraphBlock,
 } from './WeightGraph.styled';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { selectInfo } from '../../../redux/statistics/statisticSelectors';
 
-export const WeightGraph = ({ dateRange }) => {
-  const [stats, setStats] = useState([]);
-  const statsInfo = useSelector(selectInfo);
+export const WeightGraph = ({ dateRange, stats }) => {
+  let daysArray = generateDaysArray(dateRange);
 
-  useEffect(() => {
-    if (statsInfo && Array.isArray(statsInfo)) {
-      setStats(statsInfo);
-    } else {
-      setStats([]);
-    }
-  }, [statsInfo]);
-
-  console.log('Weight', stats);
-
-  let daysArray = [];
-
-  if (dateRange !== null) {
-    const startDateString = dateRange.substring(0, 10);
-    const endDateString = dateRange.substring(10);
-
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-
-    daysArray = [];
-    let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
-      daysArray.push(currentDate.getDate().toString());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-  } else {
-    console.log('DateRange is null.');
-  }
-
-  const currentWeightArray = stats.map((item) => item.stats.weight);
   const initialData = daysArray.map((day) => ({ day, value: 0 }));
   const weightData = stats.reduce((result, item) => {
-    const day = new Date(item.date).getDate().toString();
-    result.push({ day, value: item.stats.weight });
+    if (item.stats && typeof item.stats.weight === 'number') {
+      const day = new Date(item.date).getDate().toString();
+      result.push({ day, value: item.stats.weight });
+    }
     return result;
   }, []);
   const combineWeightData = initialData.map((initialItem) => {
@@ -68,12 +36,18 @@ export const WeightGraph = ({ dateRange }) => {
   console.log('arraydata', arraydata);
 
   const averageWeight = () => {
-    const totalWeight = combineWeightData.reduce(
+    const nonZeroWeights = combineWeightData.filter((item) => item.value !== 0);
+
+    if (nonZeroWeights.length === 0) {
+      return 0; // or any default value when there are no non-zero weights
+    }
+
+    const totalWeight = nonZeroWeights.reduce(
       (sum, item) => sum + item.value,
       0
     );
 
-    return totalWeight / combineWeightData.length;
+    return totalWeight / nonZeroWeights.length;
   };
 
   const avgWeight = averageWeight();
@@ -83,14 +57,14 @@ export const WeightGraph = ({ dateRange }) => {
       <WeightTitleBlock>
         <h2>Weight</h2>
         <p>
-          Average value:<span>{avgWeight}kg</span>
+          Average value: <span>{avgWeight} kg</span>
         </p>
       </WeightTitleBlock>
       <WeightGraphBlock>
         <ul>
           {arraydata.map((value, index) => (
             <li key={index}>
-              <span>{value}</span>
+              <span>{value !== 0 ? value : '?'}</span>
               <span>{index + 1}</span>
             </li>
           ))}

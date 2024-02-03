@@ -24,6 +24,7 @@ export const DashboardContainer = styled.div`
 `;
 
 export const HeaderBlock = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,6 +32,7 @@ export const HeaderBlock = styled.div`
 `;
 
 export const MainHeaderBlock = styled.div`
+  width: 100%;
   position: relative;
   display: flex;
   align-items: center;
